@@ -1,2 +1,0 @@
-def somar():
-    return "teste"
