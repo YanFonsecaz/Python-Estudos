@@ -1,0 +1,2 @@
+def somar():
+    return "teste"
