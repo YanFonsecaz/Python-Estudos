@@ -1,10 +1,8 @@
 # ================= TASKS ================= #
-
 usuarios = []
 contas_correntes = []
 LIMITE_SAQUE = 500
 numero_saque = 0
-
 
 # 1. Criar função cadastrar_usuario()
 # Comentário: Solicitar nome, data de nascimento, CPF e endereço. 
@@ -35,7 +33,6 @@ def cadastrar_usuario():
 
     usuarios.append(novo_usuario)
     print(usuarios)
-
 
 # 2. Criar função cadastrar_conta_corrente()
 # Comentário: Solicitar CPF do usuário para vinculação.
@@ -80,8 +77,6 @@ def depositar(valor,/):
     else:
         print("Conta não existe")
 
-
-
 # 4. Modificar função sacar()
 # Comentário: Receber argumentos apenas por nome (keyword only).
 # Verificar saldo suficiente e limite de saques.
@@ -105,17 +100,31 @@ def saque(*, saque, limite = LIMITE_SAQUE, num_saque = numero_saque):
         print(f"Saldo insuficiente {validacaoCPF['saldo']:.2f}")
     else:
         validacaoCPF["saldo"] -= saque
+        validacaoCPF["extrato"] += f"Foi realizado o saque de {saque}"
         print(f"Saque de {saque}, realizado com sucesso!!")
         print(validacaoCPF['saldo'])
-
+        num_saque += 1
 
 # 5. Modificar função extrato_bancario()
 # Comentário: Receber argumentos mistos (positional-only e keyword-only).
 # Imprimir saldo e extrato do usuário identificado pelo CPF.
+def extrato_bancario():
+    cpf = input("Informe o seu CPF: ").strip().replace("-","").replace(".","")
+    validacaoCPF = next((usuario for usuario in usuarios if usuario["cpf"] == cpf), None)
 
+    if validacaoCPF:
+        print("======Saldo Atual======== ")
+        print(validacaoCPF["saldo"])
+        print()
+        print("================Extrato================")
+        print(validacaoCPF["extrato"])
+    
 # 6. Vincular conta ao usuário corretamente
 # Comentário: Filtrar a lista de usuários pelo CPF informado.
 # Garantir que cada conta pertença a apenas um usuário, mas um usuário pode ter várias contas.
+
+
+
 
 # 7. Atualizar menu principal
 # Comentário: Incluir opções para cadastrar usuário e conta.
