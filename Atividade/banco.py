@@ -13,7 +13,7 @@ def cadastrar_usuario():
     print("================ Cadastrar Usuarios ======================")
     nome = input("informe seu nome: ").lower().strip()
     cpf = input("Informe seu CPF: ").replace(".","").replace("-",".")
-    validando_CPF = [usuario for usuario in usuarios if usuario["cpf"] == cpf]
+    validando_CPF = next((usuario for usuario in usuarios if usuario["cpf"] == cpf),None)
 
     if validando_CPF:
         print("Usuario ja esta cadastrado!!")
@@ -29,6 +29,7 @@ def cadastrar_usuario():
         "endereco": endereco,
         "saldo": 0,
         "extrato": "",
+        "numero_saques":0,
     }
 
     usuarios.append(novo_usuario)
@@ -82,12 +83,13 @@ def depositar(valor,/):
 # Verificar saldo suficiente e limite de saques.
 # Atualizar saldo, extrato e numero_saques do usuário.
 
-def saque(*, saque, limite = LIMITE_SAQUE, num_saque = numero_saque):
+def saque(*, saque, limite = LIMITE_SAQUE):
+    if saque <= 0:
+        print("O valor do saque deve ser maior que zero")
+        return
     if saque > limite:
         print(f"O valor de saque ultrapassa o limite:{limite}")
         return
-    if num_saque > 3:
-        print(f"Seu limite de saque diario esta esgotado {num_saque}")
     
     cpf = input("Informe seu CPF").strip().replace(".","").replace("-","")
     validacaoCPF = next((usuario for usuario in usuarios if usuario["cpf"] == cpf),None)
@@ -95,15 +97,21 @@ def saque(*, saque, limite = LIMITE_SAQUE, num_saque = numero_saque):
     if not validacaoCPF:
         print("Usuário não encontrado.")
         return
-
+    
+    if validacaoCPF["numero_saques"] >= 3:
+        print("Seu limite diario de saque foi atingindo.")
+        return
+    
     if validacaoCPF["saldo"] < saque:
         print(f"Saldo insuficiente {validacaoCPF['saldo']:.2f}")
-    else:
-        validacaoCPF["saldo"] -= saque
-        validacaoCPF["extrato"] += f"Foi realizado o saque de {saque}"
-        print(f"Saque de {saque}, realizado com sucesso!!")
-        print(validacaoCPF['saldo'])
-        num_saque += 1
+        return
+    
+
+    validacaoCPF["saldo"] -= saque
+    validacaoCPF["extrato"] += f"Foi realizado o saque de {saque}"
+    validacaoCPF["numero_saques"] += 1
+    print(f"Saque de {saque}, realizado com sucesso!!")
+    print(validacaoCPF['saldo'])
 
 # 5. Modificar função extrato_bancario()
 # Comentário: Receber argumentos mistos (positional-only e keyword-only).
@@ -119,13 +127,39 @@ def extrato_bancario():
         print("================Extrato================")
         print(validacaoCPF["extrato"])
     
-# 6. Vincular conta ao usuário corretamente
-# Comentário: Filtrar a lista de usuários pelo CPF informado.
-# Garantir que cada conta pertença a apenas um usuário, mas um usuário pode ter várias contas.
 
-
-
-
-# 7. Atualizar menu principal
+# 6. Atualizar menu principal
 # Comentário: Incluir opções para cadastrar usuário e conta.
 # Chamar funções correspondentes corretamente.
+
+while True:
+    opcao = input("""
+        [c] Cadastrar usuário
+        [u] Cadastrar conta corrente
+        [d] Depositar
+        [s] Sacar
+        [e] Extrato
+        [q] Sair
+    """).strip().lower()
+
+    if opcao == "c":
+        print("Bem vindo a seção de cadastro!!")
+        cadastrar_usuario()
+    elif opcao == "u":
+        print("Crie uma conta-corrente!!")
+        cadastrar_conta_corrente()
+    elif opcao == "d":
+        print("Realize um deposito")
+        valor = float(input("informe o valor do deposito: "))
+        depositar(valor)
+    elif opcao == "s":
+        print("Realize um Saque!!")
+        saques = float(input("Digite o valor do saque:"))
+        saque(saque=saques)
+    elif opcao == "e":
+        print("Extrato Bancario!!")
+        extrato_bancario()
+    elif opcao == "q":
+        break
+    else:
+        print("Valor digitado incorreto!")
