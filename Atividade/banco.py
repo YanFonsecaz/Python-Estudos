@@ -87,12 +87,12 @@ def depositar(valor,/):
 # Verificar saldo suficiente e limite de saques.
 # Atualizar saldo, extrato e numero_saques do usuário.
 
-def saque(*, saque):
-    if saque > LIMITE_SAQUE:
-        print(f"O valor de saque ultrapassa o limite:{LIMITE_SAQUE}")
+def saque(*, saque, limite = LIMITE_SAQUE, num_saque = numero_saque):
+    if saque > limite:
+        print(f"O valor de saque ultrapassa o limite:{limite}")
         return
-    if numero_saque > 3:
-        print(f"Seu limite de saque diario esta esgotado {numero_saque}")
+    if num_saque > 3:
+        print(f"Seu limite de saque diario esta esgotado {num_saque}")
     
     cpf = input("Informe seu CPF").strip().replace(".","").replace("-","")
     validacaoCPF = next((usuario for usuario in usuarios if usuario["cpf"] == cpf),None)
