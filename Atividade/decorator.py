@@ -32,6 +32,7 @@ print(somar(2,2))
 import time
 
 def tempo_execucao(tarefa_pesada):
+    @functools.wraps(tarefa_pesada)
     def envolepe(*args,**kwargs):
         inicio = time.time()
         resultado = tarefa_pesada(*args,**kwargs)
